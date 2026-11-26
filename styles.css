@@ -39,7 +39,15 @@ h1, p { margin: 0; }
   padding: max(12px, env(safe-area-inset-top)) 16px max(20px, env(safe-area-inset-bottom));
 }
 
-.hero { display: flex; align-items: center; gap: 14px; padding-top: 12px; }
+.hero { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding-top: 12px; }
+.brand { display: flex; align-items: center; gap: 14px; border: 0; background: none; padding: 0; color: inherit; font: inherit; cursor: pointer; }
+.home {
+  width: 56px; height: 56px; border: 0; border-radius: 20px; cursor: pointer; display: grid; place-items: center;
+  background: #c6e7ff; color: #001e2d; transition: border-radius 300ms var(--spring);
+}
+.home:active { border-radius: 28px; }
+.home svg { width: 28px; height: 28px; fill: currentColor; }
+.home:focus-visible, .brand:focus-visible { outline: 3px solid #00658d; outline-offset: 3px; }
 .hero-icon { border-radius: 14px; }
 .hero h1 { font-size: 32px; line-height: 40px; font-weight: 500; }
 

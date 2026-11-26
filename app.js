@@ -49,6 +49,7 @@
     void card.offsetWidth; // restart the animation
     card.classList.add("pop");
     $("go").textContent = "Next movie";
+    $("home").hidden = false;
     fit();
   }
 
@@ -67,7 +68,24 @@
   }
   window.addEventListener("resize", fit);
 
-  $("go").addEventListener("click", () => { current = pick(); show(current); });
+  // Back to the start screen
+  function goHome() {
+    $("card").hidden = true;
+    $("welcome").hidden = false;
+    $("home").hidden = true;
+    $("go").textContent = "Get a movie";
+    current = null;
+  }
+
+  $("go").addEventListener("click", () => {
+    if ($("card").hidden) history.pushState({ movie: true }, ""); // so the phone's back gesture returns home
+    current = pick();
+    show(current);
+  });
+  const backHome = () => { if (history.state && history.state.movie) history.back(); else goHome(); };
+  $("home").addEventListener("click", backHome);
+  $("brand").addEventListener("click", backHome);
+  window.addEventListener("popstate", goHome);
 
   if ("serviceWorker" in navigator && location.protocol !== "file:") {
     window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
