@@ -2,16 +2,13 @@
 
 *Ishara* (इशारा) means "a gesture" or "a signal". It's a progressive web app for playing dumb charades with **English and Hindi movies**, built in a bright, light Material Design 3 style with sky-blue accents and pastel tiles. There's no build step and no server code, and it works fully offline once loaded.
 
-## Features
+## How it works
 
-- **A simple randomizer**: ~1,500 English and Hindi movies, picked at random with no filters to set
-- **Team game**: 2–6 named teams, with a choice of time to act, turns per team and passes per turn. Each guessed movie scores 1 point
-- **Quick pick**: shows a random movie, with an optional timer
-- The movie card shows the number of words and the letters in each word, to help the actor signal, plus the language and year
-- While the timer runs, the title is covered; press and hold to peek
-- Beeps and vibration for the last 5 seconds, and the screen stays on while the timer runs
-- Movies already played don't repeat until the list runs out (you can reset this)
-- Material 3 Expressive design: big pastel tiles, sky-blue accents (`#2AB6F6`), light theme
+One screen, one button. Tap **Get a movie** and a random English or Hindi movie appears; tap **Next movie** for another.
+
+- ~1,500 movies, picked at random; none repeats until you've seen them all
+- The card shows the number of words and the letters in each word (handy for signalling), plus the language and year
+- Light, bright Material 3 Expressive look with sky-blue accents
 - Installable to the home screen and works offline
 
 ## Run locally

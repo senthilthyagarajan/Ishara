@@ -1,8 +1,8 @@
 // Ishara service worker.
 // Network first: when online you always get the latest version; the cache is only used offline.
 // Bump CACHE (and the ?v= numbers in index.html) on every release.
-const CACHE = "ishara-v7";
-const V = "?v=7";
+const CACHE = "ishara-v8";
+const V = "?v=8";
 const ASSETS = [
   "./",
   "index.html",
