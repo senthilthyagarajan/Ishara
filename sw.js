@@ -1,11 +1,14 @@
-// Ishara service worker: cache the app shell (and the web font) so the game works fully offline.
-const CACHE = "ishara-v3";
+// Ishara service worker.
+// Network first: when online you always get the latest version; the cache is only used offline.
+// Bump CACHE (and the ?v= numbers in index.html) on every release.
+const CACHE = "ishara-v6";
+const V = "?v=6";
 const ASSETS = [
   "./",
   "index.html",
-  "styles.css",
-  "app.js",
-  "movies.js",
+  "styles.css" + V,
+  "app.js" + V,
+  "movies.js" + V,
   "manifest.webmanifest",
   "icons/icon.svg",
   "icons/icon-192.png",
@@ -16,7 +19,11 @@ const ASSETS = [
 const FONT_HOSTS = ["fonts.googleapis.com", "fonts.gstatic.com"];
 
 self.addEventListener("install", (e) => {
-  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(ASSETS)).then(() => self.skipWaiting()));
+  e.waitUntil(
+    caches.open(CACHE)
+      .then((c) => c.addAll(ASSETS.map((u) => new Request(u, { cache: "reload" }))))
+      .then(() => self.skipWaiting())
+  );
 });
 
 self.addEventListener("activate", (e) => {
@@ -27,19 +34,31 @@ self.addEventListener("activate", (e) => {
   );
 });
 
-// Stale-while-revalidate: answer from cache instantly, refresh it in the background.
 self.addEventListener("fetch", (e) => {
   const req = e.request;
   const url = new URL(req.url);
-  const sameOrigin = url.origin === location.origin;
-  if (req.method !== "GET" || (!sameOrigin && !FONT_HOSTS.includes(url.hostname))) return;
+  if (req.method !== "GET") return;
+
+  // Fonts: cache first (they never change).
+  if (FONT_HOSTS.includes(url.hostname)) {
+    e.respondWith(caches.open(CACHE).then(async (cache) => {
+      const hit = await cache.match(req);
+      if (hit) return hit;
+      const res = await fetch(req);
+      if (res.ok || res.type === "opaque") cache.put(req, res.clone());
+      return res;
+    }));
+    return;
+  }
+  if (url.origin !== location.origin) return;
+
+  // App files: network first, fall back to the cache when offline.
   e.respondWith(
-    caches.open(CACHE).then(async (cache) => {
-      const cached = await cache.match(req, { ignoreSearch: sameOrigin });
-      const network = fetch(req)
-        .then((res) => { if (res.ok || res.type === "opaque") cache.put(req, res.clone()); return res; })
-        .catch(() => cached || (req.mode === "navigate" ? cache.match("index.html") : Response.error()));
-      return cached || network;
-    })
+    fetch(req, { cache: "no-cache" })
+      .then((res) => {
+        if (res.ok) { const copy = res.clone(); caches.open(CACHE).then((c) => c.put(req, copy)); }
+        return res;
+      })
+      .catch(async () => (await caches.match(req)) || (req.mode === "navigate" ? caches.match("index.html") : Response.error()))
   );
 });

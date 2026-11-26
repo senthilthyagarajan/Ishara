@@ -84,6 +84,7 @@ body.has-nav .screen { min-height: calc(100dvh - 112px - env(safe-area-inset-bot
 .section-label { font-size: 14px; font-weight: 600; letter-spacing: .1px; color: var(--md-on-surface-variant); margin-top: 6px; }
 
 .hero { display: flex; align-items: center; gap: 14px; padding: 20px 0 4px; }
+#screen-home .hero { padding-bottom: 8px; }
 .hero-icon { border-radius: 14px; }
 
 .app-bar { display: grid; grid-template-columns: 48px 1fr 48px; align-items: center; min-height: 64px; margin: 0 -8px; }
@@ -116,23 +117,19 @@ body.has-nav .screen { min-height: calc(100dvh - 112px - env(safe-area-inset-bot
 .icon-btn { width: 48px; height: 48px; border-radius: 50%; border: 0; background: transparent; color: var(--md-on-surface); display: grid; place-items: center; cursor: pointer; }
 
 /* ---------- language tiles (horizontal, scrollable) ---------- */
-.tile-row {
-  display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; margin: 0 -16px; padding: 8px 16px 8px; scroll-padding: 0 16px;
-  scrollbar-width: none;
-}
-.tile-row::-webkit-scrollbar { display: none; }
+/* three tiles always fit side by side, on any phone width */
+.tile-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; padding: 4px 0; }
 .tile {
-  flex: 0 0 152px; height: 212px; border: 0; border-radius: 40px; padding: 20px 20px 22px; text-align: left; cursor: pointer;
-  display: flex; flex-direction: column; justify-content: space-between; scroll-snap-align: start;
+  min-width: 0; height: clamp(150px, 46vw, 200px); border: 0; border-radius: 32px; padding: 16px 14px 18px; text-align: left; cursor: pointer;
+  display: flex; flex-direction: column; justify-content: space-between;
   transition: border-radius 350ms var(--spring), transform 200ms var(--ease);
 }
 .tile:active { transform: scale(.97); }
-.tile[aria-checked="true"] { border-radius: 28px; outline: 3px solid var(--md-on-surface); outline-offset: 3px; }
-.tile-num { font-size: 56px; line-height: 1; font-weight: 400; letter-spacing: -1.5px; font-variant-numeric: tabular-nums; }
-.tile-foot { display: flex; flex-direction: column; gap: 2px; }
-.tile-title { font-size: 24px; line-height: 30px; font-weight: 600; }
-.tile-sub { display: flex; align-items: center; gap: 4px; font-size: 15px; font-weight: 600; }
-.tile-sub .ic { width: 16px; height: 16px; }
+.tile[aria-checked="true"] { border-radius: 20px; outline: 3px solid var(--md-on-surface); outline-offset: 3px; }
+.tile-num { font-size: clamp(28px, 9.5vw, 48px); line-height: 1; font-weight: 400; letter-spacing: -1px; font-variant-numeric: tabular-nums; }
+.tile-foot { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.tile-title { font-size: clamp(17px, 5.2vw, 22px); line-height: 1.2; font-weight: 600; }
+.tile-sub { font-size: clamp(12px, 3.4vw, 14px); font-weight: 600; opacity: .8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* ---------- difficulty: shape-morphing buttons ---------- */
 .morph-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }

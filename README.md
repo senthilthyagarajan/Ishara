@@ -30,4 +30,4 @@ It's all static files, so any static host works. For GitHub Pages: **Settings â†
 
 ## Adding movies
 
-Edit `movies.js`: add `"Title|Year"` to the right language and difficulty list. Films from 1990 or earlier, and duplicates, are dropped automatically. Then bump `CACHE` in `sw.js` (for example to `ishara-v2`) so installed copies pick up the change.
+Edit `movies.js`: add `"Title|Year"` to the right language and difficulty list. Films from 1990 or earlier, and duplicates, are dropped automatically. Then bump the version on every release: `CACHE` and `V` in `sw.js`, and the matching `?v=` numbers on `styles.css`, `movies.js` and `app.js` in `index.html`. Keeping them in step means a phone never mixes an old script with a new page.

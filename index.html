@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,400..800&display=swap" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=6" />
 </head>
 <body>
   <!-- Material icon sprite (Apache 2.0, Google) -->
@@ -49,25 +49,22 @@
     <section class="screen" id="screen-home" data-active>
       <header class="hero">
         <img class="hero-icon" src="icons/icon.svg" alt="" width="48" height="48" />
-        <div>
-          <h1 class="headline-large">Ishara</h1>
-          <p class="body-medium muted">Dumb charades with English &amp; Hindi movies</p>
-        </div>
+        <h1 class="headline-large">Ishara</h1>
       </header>
 
       <h2 class="section-label">Movies</h2>
       <div class="tile-row" role="radiogroup" aria-label="Language" data-setting="language">
         <button class="tile c-blue ripple" data-value="both">
           <span class="tile-num" data-count="both"></span>
-          <span class="tile-foot"><span class="tile-title">Both</span><span class="tile-sub"><svg class="ic"><use href="#i-movie"/></svg>All movies</span></span>
+          <span class="tile-foot"><span class="tile-title">Both</span><span class="tile-sub">All movies</span></span>
         </button>
         <button class="tile c-yellow ripple" data-value="english">
           <span class="tile-num" data-count="english"></span>
-          <span class="tile-foot"><span class="tile-title">English</span><span class="tile-sub"><svg class="ic"><use href="#i-globe"/></svg>Hollywood</span></span>
+          <span class="tile-foot"><span class="tile-title">English</span><span class="tile-sub">Hollywood</span></span>
         </button>
         <button class="tile c-peach ripple" data-value="hindi">
           <span class="tile-num" data-count="hindi"></span>
-          <span class="tile-foot"><span class="tile-title">Hindi</span><span class="tile-sub"><svg class="ic"><use href="#i-movie"/></svg>Bollywood</span></span>
+          <span class="tile-foot"><span class="tile-title">Hindi</span><span class="tile-sub">Bollywood</span></span>
         </button>
       </div>
 
@@ -271,7 +268,16 @@
 
   <div class="snackbar body-medium" id="toast" role="status" aria-live="polite"></div>
 
-  <script src="movies.js"></script>
-  <script src="app.js"></script>
+  <script>
+    // When a new version of the app takes over, reload once so the page and its code always match.
+    if ("serviceWorker" in navigator) {
+      let reloaded = false;
+      navigator.serviceWorker.addEventListener("controllerchange", () => {
+        if (!reloaded && navigator.serviceWorker.controller) { reloaded = true; location.reload(); }
+      });
+    }
+  </script>
+  <script src="movies.js?v=6"></script>
+  <script src="app.js?v=6"></script>
 </body>
 </html>
