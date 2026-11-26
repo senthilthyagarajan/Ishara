@@ -1,5 +1,5 @@
 // Ishara service worker: cache the app shell (and the web font) so the game works fully offline.
-const CACHE = "ishara-v1";
+const CACHE = "ishara-v3";
 const ASSETS = [
   "./",
   "index.html",

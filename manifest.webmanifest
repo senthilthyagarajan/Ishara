@@ -1,13 +1,13 @@
 {
   "name": "Ishara – Dumb Charades",
   "short_name": "Ishara",
-  "description": "Dumb charades with English and Hindi movies from 1991 onwards.",
+  "description": "Dumb charades with English and Hindi movies.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#fff8f5",
-  "theme_color": "#fff8f5",
+  "background_color": "#fbfcff",
+  "theme_color": "#fbfcff",
   "categories": ["games", "entertainment"],
   "icons": [
     { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
