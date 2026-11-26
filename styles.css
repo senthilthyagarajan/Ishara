@@ -74,9 +74,7 @@ h1, h2, h3, p { margin: 0; }
   max-width: 560px; margin: 0 auto; min-height: 100dvh;
   padding: max(8px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
 }
-body.has-nav #app { padding-bottom: calc(96px + env(safe-area-inset-bottom)); }
 .screen { display: none; flex-direction: column; gap: 14px; min-height: calc(100dvh - 24px); }
-body.has-nav .screen { min-height: calc(100dvh - 112px - env(safe-area-inset-bottom)); }
 .screen[data-active] { display: flex; animation: enter 350ms var(--ease); }
 @keyframes enter { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
 .actions { display: flex; flex-direction: column; gap: 8px; margin-top: auto; padding-top: 8px; }
@@ -116,29 +114,18 @@ body.has-nav .screen { min-height: calc(100dvh - 112px - env(safe-area-inset-bot
 
 .icon-btn { width: 48px; height: 48px; border-radius: 50%; border: 0; background: transparent; color: var(--md-on-surface); display: grid; place-items: center; cursor: pointer; }
 
-/* ---------- language tiles (horizontal, scrollable) ---------- */
-/* three tiles always fit side by side, on any phone width */
-.tile-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; padding: 4px 0; }
-.tile {
-  min-width: 0; height: clamp(150px, 46vw, 200px); border: 0; border-radius: 32px; padding: 16px 14px 18px; text-align: left; cursor: pointer;
+/* ---------- home: two big mode tiles ---------- */
+.modes { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
+.mode {
+  height: clamp(180px, 30vh, 240px); border: 0; border-radius: 44px; padding: 26px 26px 28px; text-align: left; cursor: pointer;
   display: flex; flex-direction: column; justify-content: space-between;
   transition: border-radius 350ms var(--spring), transform 200ms var(--ease);
 }
-.tile:active { transform: scale(.97); }
-.tile[aria-checked="true"] { border-radius: 20px; outline: 3px solid var(--md-on-surface); outline-offset: 3px; }
-.tile-num { font-size: clamp(28px, 9.5vw, 48px); line-height: 1; font-weight: 400; letter-spacing: -1px; font-variant-numeric: tabular-nums; }
-.tile-foot { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.tile-title { font-size: clamp(17px, 5.2vw, 22px); line-height: 1.2; font-weight: 600; }
-.tile-sub { font-size: clamp(12px, 3.4vw, 14px); font-weight: 600; opacity: .8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-/* ---------- difficulty: shape-morphing buttons ---------- */
-.morph-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-.morph {
-  height: 64px; border: 0; border-radius: 20px; cursor: pointer; font-size: 15px; font-weight: 600;
-  background: var(--md-secondary-container); color: var(--md-on-secondary-container);
-  transition: border-radius 350ms var(--spring), background-color 200ms, color 200ms;
-}
-.morph[aria-checked="true"] { border-radius: 32px; background: var(--md-primary); color: var(--md-on-primary); }
+.mode:active { border-radius: 28px; transform: scale(.98); }
+.mode-ic { width: 48px; height: 48px; }
+.mode-foot { display: flex; flex-direction: column; gap: 4px; }
+.mode-title { font-size: clamp(30px, 9vw, 40px); line-height: 1.1; font-weight: 600; }
+.mode-sub { font-size: 16px; font-weight: 600; opacity: .75; }
 
 /* ---------- filled select field ---------- */
 .field { position: relative; display: block; min-width: 0; }
@@ -174,13 +161,12 @@ body.has-nav .screen { min-height: calc(100dvh - 112px - env(safe-area-inset-bot
 
 /* ---------- movie card ---------- */
 .movie-card {
-  position: relative; overflow: hidden; border-radius: 40px; padding: 24px; min-height: 300px;
+  position: relative; overflow: hidden; border-radius: 40px; padding: 24px; min-height: clamp(220px, 36vh, 300px);
   display: flex; flex-direction: column; gap: 14px;
 }
 .mc-top { display: flex; align-items: baseline; gap: 8px; }
 .mc-num { font-size: 80px; line-height: .9; font-weight: 400; letter-spacing: -2px; }
 .mc-unit { font-size: 18px; font-weight: 600; }
-.mc-diff { margin-left: auto; align-self: flex-start; padding: 6px 14px; border-radius: 999px; background: color-mix(in srgb, currentColor 12%, transparent); }
 .mc-letters { display: flex; flex-wrap: wrap; gap: 6px; }
 .mc-letters span {
   min-width: 36px; height: 36px; padding: 0 8px; border-radius: 12px; display: grid; place-items: center;
@@ -200,14 +186,14 @@ body.has-nav .screen { min-height: calc(100dvh - 112px - env(safe-area-inset-bot
 .badge:empty { display: none; }
 
 /* ---------- timer ---------- */
-.timer { position: relative; width: 180px; height: 180px; margin: 4px auto 0; }
+.timer { position: relative; width: clamp(130px, 22vh, 180px); height: clamp(130px, 22vh, 180px); margin: 0 auto; }
 .timer svg { width: 100%; height: 100%; transform: rotate(-90deg); }
 .timer circle { fill: none; stroke-width: 12; }
 .timer .track { stroke: var(--md-primary-container); }
 .timer .bar { stroke: var(--md-primary); stroke-linecap: round; stroke-dasharray: 326.73; transition: stroke-dashoffset 250ms linear, stroke 300ms; }
 .timer.low .bar { stroke: var(--md-error); }
 .timer.low #timer-text { color: var(--md-error); animation: pulse 1s infinite; }
-#timer-text { position: absolute; inset: 0; display: grid; place-items: center; font-size: 52px; font-variant-numeric: tabular-nums; }
+#timer-text { position: absolute; inset: 0; display: grid; place-items: center; font-size: clamp(38px, 6.5vh, 52px); font-variant-numeric: tabular-nums; }
 @keyframes pulse { 50% { transform: scale(1.06); } }
 
 /* ---------- play controls (like the media controls) ---------- */
@@ -234,18 +220,6 @@ body.has-nav .screen { min-height: calc(100dvh - 112px - env(safe-area-inset-bot
 .signals li { display: flex; align-items: center; gap: 14px; min-height: 52px; font-size: 15px; }
 .sig { width: 44px; height: 44px; border-radius: 16px; display: grid; place-items: center; background: var(--md-surface-container-high); font-size: 22px; flex: none; }
 
-/* ---------- navigation bar ---------- */
-.nav-bar {
-  position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; display: none; justify-content: center;
-  background: var(--nav-bg); padding: 12px 8px calc(16px + env(safe-area-inset-bottom));
-}
-body.has-nav .nav-bar { display: flex; }
-.nav-item { flex: 1; max-width: 140px; border: 0; background: none; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; color: var(--md-on-surface-variant); }
-.nav-pill { width: 64px; height: 32px; border-radius: 16px; display: grid; place-items: center; transition: background-color 200ms, width 300ms var(--spring); }
-.nav-label { font-size: 12px; font-weight: 600; letter-spacing: .5px; }
-.nav-item[aria-current="page"] { color: var(--md-on-surface); }
-.nav-item[aria-current="page"] .nav-pill { background: var(--md-primary-container); color: var(--md-on-secondary-container); }
-
 /* ---------- dialog + snackbar ---------- */
 .dialog { border: 0; padding: 24px; border-radius: 28px; width: min(320px, calc(100% - 48px)); background: var(--md-surface-container-high); color: var(--md-on-surface); }
 .dialog::backdrop { background: rgba(0,0,0,.32); }
@@ -254,10 +228,18 @@ body.has-nav .nav-bar { display: flex; }
 .dialog form { display: flex; flex-direction: column; gap: 16px; }
 .dialog-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px; }
 .snackbar {
-  position: fixed; left: 50%; bottom: calc(108px + env(safe-area-inset-bottom)); translate: -50% 24px; z-index: 10;
+  position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom)); translate: -50% 24px; z-index: 10;
   padding: 14px 16px; border-radius: 12px; background: var(--md-inverse-surface); color: var(--md-inverse-on-surface);
   opacity: 0; pointer-events: none; transition: opacity 200ms, translate 250ms var(--ease); width: max-content; max-width: min(520px, calc(100% - 32px));
 }
 .snackbar.show { opacity: 1; translate: -50% 0; }
+
+/* short screens (e.g. iPhone SE): tighten spacing so the play controls stay on screen */
+@media (max-height: 640px) {
+  .screen { gap: 10px; }
+  .app-bar { min-height: 52px; }
+  .ctl { height: 72px; }
+  .btn.xl { height: 60px; }
+}
 
 @media (prefers-reduced-motion: reduce) { *, *::before { animation: none !important; transition: none !important; } }

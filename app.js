@@ -2,13 +2,11 @@
   "use strict";
 
   const MOVIES = window.ISHARA_MOVIES || [];
-  const POINTS = { easy: 1, medium: 2, hard: 3 };
-  const DIFF_COLOR = { easy: "c-lavender", medium: "c-yellow", hard: "c-peach" };
+  const CARD_COLORS = ["c-lavender", "c-yellow", "c-peach", "c-blue", "c-pink", "c-coral"];
   const TEAM_COLORS = ["c-lavender", "c-yellow", "c-peach", "c-blue", "c-pink", "c-coral"];
   const LANG_LABEL = { english: "English", hindi: "Hindi" };
 
   const $ = (id) => document.getElementById(id);
-  const cap = (s) => s[0].toUpperCase() + s.slice(1);
 
   // ---------- storage (best effort; the app works without it) ----------
   const store = {
@@ -19,29 +17,19 @@
     set(key, value) { try { localStorage.setItem("ishara:" + key, JSON.stringify(value)); } catch { /* ignore */ } },
   };
 
-  const settings = Object.assign({ language: "both", difficulty: "any", fromYear: 1991 }, store.get("settings", {}));
   let teamNames = store.get("teams", ["Team Masala", "Team Popcorn"]);
   let seen = new Set(store.get("seen", []));
   let game = null;
 
-  // ---------- screens + navigation bar ----------
+  // ---------- screens ----------
   function show(name) {
     document.querySelectorAll(".screen").forEach((s) => s.removeAttribute("data-active"));
     $("screen-" + name).setAttribute("data-active", "");
-    const navTab = name === "home" ? "home" : name === "rules" ? "rules" : name === "play" && !game ? "quick" : null;
-    document.body.classList.toggle("has-nav", !!navTab);
-    document.querySelectorAll(".nav-item").forEach((b) => {
-      if (b.dataset.nav === navTab) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current");
-    });
     window.scrollTo(0, 0);
   }
   const goHome = () => { stopTimer(); show("home"); refreshPool(); };
   document.querySelectorAll("[data-go=home]").forEach((b) => b.addEventListener("click", goHome));
-  document.querySelectorAll(".nav-item").forEach((b) => b.addEventListener("click", () => {
-    if (b.dataset.nav === "home") goHome();
-    else if (b.dataset.nav === "rules") { stopTimer(); show("rules"); }
-    else startQuick();
-  }));
+  $("btn-rules").addEventListener("click", () => show("rules"));
 
   let toastTimer;
   function toast(msg) {
@@ -78,21 +66,12 @@
     w.addEventListener("animationend", () => w.remove());
   });
 
-  // ---------- movie pool ----------
-  const matches = (m, lang) =>
-    (lang === "both" || m.language === lang) &&
-    (settings.difficulty === "any" || m.difficulty === settings.difficulty) &&
-    m.year >= settings.fromYear;
-  const pool = () => MOVIES.filter((m) => matches(m, settings.language));
+  // ---------- movie pool: every movie, picked at random ----------
+  const pool = () => MOVIES;
 
   function refreshPool() {
-    document.querySelectorAll("[data-count]").forEach((el) => {
-      el.textContent = MOVIES.filter((m) => matches(m, el.dataset.count)).length;
-    });
-    const p = pool();
-    const fresh = p.filter((m) => !seen.has(m.id)).length;
-    $("pool-count").textContent = `${p.length} movies selected · ${fresh} not played yet`;
-    $("btn-team").disabled = p.length === 0;
+    const fresh = MOVIES.filter((m) => !seen.has(m.id)).length;
+    $("pool-count").textContent = `${MOVIES.length.toLocaleString("en-IN")} movies · ${fresh.toLocaleString("en-IN")} not played yet`;
   }
 
   function drawMovie(exclude) {
@@ -111,36 +90,6 @@
     return m;
   }
 
-  // ---------- home settings ----------
-  document.querySelectorAll("[data-setting]").forEach((group) => {
-    const key = group.dataset.setting;
-    const buttons = group.querySelectorAll("button");
-    buttons.forEach((b) => b.setAttribute("role", "radio"));
-    const sync = () => buttons.forEach((b) => b.setAttribute("aria-checked", String(b.dataset.value === settings[key])));
-    group.addEventListener("click", (e) => {
-      const b = e.target.closest("button");
-      if (!b) return;
-      settings[key] = b.dataset.value;
-      store.set("settings", settings);
-      sync(); refreshPool();
-    });
-    sync();
-  });
-
-  const fromYear = $("from-year");
-  const lastYear = Math.max(new Date().getFullYear(), ...MOVIES.map((m) => m.year));
-  const yearChoices = [1991];
-  for (let y = 1995; y < 2020; y += 5) yearChoices.push(y);
-  for (let y = 2020; y <= lastYear; y++) yearChoices.push(y);
-  yearChoices.forEach((y) => fromYear.add(new Option(y === 1991 ? "All years" : `${y} and later`, y)));
-  fromYear.value = String(settings.fromYear);
-  if (!fromYear.value) { fromYear.value = "1991"; settings.fromYear = 1991; }
-  fromYear.addEventListener("change", () => {
-    settings.fromYear = Number(fromYear.value);
-    store.set("settings", settings);
-    refreshPool();
-  });
-
   $("btn-reset-seen").addEventListener("click", () => {
     seen = new Set(); store.set("seen", []);
     refreshPool(); toast("Played movies cleared");
@@ -148,11 +97,11 @@
 
   // ---------- movie card ----------
   function renderMovie(m) {
-    $("movie-card").className = "movie-card " + DIFF_COLOR[m.difficulty];
+    const colors = CARD_COLORS.filter((c) => !$("movie-card").classList.contains(c));
+    $("movie-card").className = "movie-card " + colors[Math.floor(Math.random() * colors.length)];
     $("m-title").textContent = m.title;
     $("m-lang").textContent = LANG_LABEL[m.language];
     $("m-year").textContent = m.year;
-    $("m-diff").textContent = cap(m.difficulty) + (game ? ` · ${POINTS[m.difficulty]} pt${POINTS[m.difficulty] > 1 ? "s" : ""}` : "");
     const words = m.title.split(/\s+/).filter((w) => /[\p{L}\p{N}]/u.test(w));
     $("m-count").textContent = words.length;
     $("m-unit").textContent = words.length === 1 ? "word" : "words";
@@ -307,7 +256,6 @@
     $("act-live").hidden = mode !== "live";
     $("act-quick").hidden = mode !== "quick";
     cover.hidden = mode !== "live";
-    $("btn-play-back").style.visibility = mode === "quick" ? "hidden" : "visible";
     peek(false);
   }
 
@@ -348,7 +296,7 @@
     const t = currentTeam();
     const m = game.movie;
     const secs = Math.round((Date.now() - game.startedAt) / 1000);
-    const pts = guessed ? POINTS[m.difficulty] : 0;
+    const pts = guessed ? 1 : 0;
     t.score += pts;
     if (guessed) { beep(1320, 140); setTimeout(() => beep(1760, 180), 140); buzz(80); }
     $("r-emoji").textContent = guessed ? "🎉" : timedOut ? "⏰" : "😅";
@@ -407,13 +355,14 @@
     if (quickMovie) renderMovie(quickMovie);
   }
   function startQuick() {
-    game = null; // the nav bar is only visible outside a team game
+    game = null;
     $("play-team").textContent = "Quick pick";
     updatePasses();
     setPlayMode("quick");
     quickNext();
     show("play");
   }
+  $("btn-quick").addEventListener("click", startQuick);
   $("btn-quick-next").addEventListener("click", quickNext);
   $("btn-quick-timer").addEventListener("click", () => {
     if (timerRunning()) { stopTimer(); $("timer").hidden = true; setQuickTimerLabel(false); return; }

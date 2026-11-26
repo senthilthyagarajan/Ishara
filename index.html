@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,400..800&display=swap" />
-  <link rel="stylesheet" href="styles.css?v=6" />
+  <link rel="stylesheet" href="styles.css?v=7" />
 </head>
 <body>
   <!-- Material icon sprite (Apache 2.0, Google) -->
@@ -52,41 +52,24 @@
         <h1 class="headline-large">Ishara</h1>
       </header>
 
-      <h2 class="section-label">Movies</h2>
-      <div class="tile-row" role="radiogroup" aria-label="Language" data-setting="language">
-        <button class="tile c-blue ripple" data-value="both">
-          <span class="tile-num" data-count="both"></span>
-          <span class="tile-foot"><span class="tile-title">Both</span><span class="tile-sub">All movies</span></span>
+      <div class="modes">
+        <button class="mode c-lavender ripple" id="btn-team">
+          <svg class="ic mode-ic"><use href="#i-people"/></svg>
+          <span class="mode-foot"><span class="mode-title">Team game</span><span class="mode-sub">Take turns and keep score</span></span>
         </button>
-        <button class="tile c-yellow ripple" data-value="english">
-          <span class="tile-num" data-count="english"></span>
-          <span class="tile-foot"><span class="tile-title">English</span><span class="tile-sub">Hollywood</span></span>
-        </button>
-        <button class="tile c-peach ripple" data-value="hindi">
-          <span class="tile-num" data-count="hindi"></span>
-          <span class="tile-foot"><span class="tile-title">Hindi</span><span class="tile-sub">Bollywood</span></span>
+        <button class="mode c-yellow ripple" id="btn-quick">
+          <svg class="ic mode-ic"><use href="#i-bolt"/></svg>
+          <span class="mode-foot"><span class="mode-title">Quick pick</span><span class="mode-sub">Just show me a movie</span></span>
         </button>
       </div>
-
-      <h2 class="section-label">Difficulty</h2>
-      <div class="morph-row" role="radiogroup" aria-label="Difficulty" data-setting="difficulty">
-        <button class="morph ripple" data-value="any">Any</button>
-        <button class="morph ripple" data-value="easy">Easy</button>
-        <button class="morph ripple" data-value="medium">Medium</button>
-        <button class="morph ripple" data-value="hard">Hard</button>
-      </div>
-
-      <label class="field">
-        <span class="field-label">Released</span>
-        <select id="from-year"></select>
-        <svg class="ic field-trail"><use href="#i-arrow-drop"/></svg>
-      </label>
-      <p class="body-small muted pool" id="pool-count"></p>
 
       <div class="actions">
-        <button class="btn filled xl ripple" id="btn-team"><svg class="ic"><use href="#i-people"/></svg>Start team game</button>
+        <p class="body-small muted pool" id="pool-count"></p>
         <div class="row-center">
-          <button class="btn text ripple" id="btn-reset-seen"><svg class="ic"><use href="#i-refresh"/></svg>Reset played movies</button>
+          <button class="btn text ripple" id="btn-rules"><svg class="ic"><use href="#i-help"/></svg>How to play</button>
+          <button class="btn text ripple" id="btn-reset-seen"><svg class="ic"><use href="#i-refresh"/></svg>Reset played</button>
+        </div>
+        <div class="row-center">
           <button class="btn text ripple" id="btn-install" hidden><svg class="ic"><use href="#i-download"/></svg>Install app</button>
         </div>
       </div>
@@ -160,7 +143,6 @@
         <div class="mc-top">
           <span class="mc-num" id="m-count"></span>
           <span class="mc-unit" id="m-unit"></span>
-          <span class="mc-diff label-large" id="m-diff"></span>
         </div>
         <div class="mc-letters" id="m-words" aria-label="Letters in each word"></div>
         <div class="mc-foot">
@@ -224,15 +206,17 @@
 
     <!-- RULES -->
     <section class="screen" id="screen-rules">
-      <header class="hero">
-        <div><h1 class="headline-large">How to play</h1></div>
+      <header class="app-bar">
+        <button class="icon-btn ripple" data-go="home" aria-label="Back"><svg class="ic"><use href="#i-back"/></svg></button>
+        <h2 class="title-large">How to play</h2>
+        <span></span>
       </header>
       <ol class="steps">
         <li class="c-lavender">Split into teams. On your turn, one player looks at the movie — nobody else.</li>
         <li class="c-yellow">Start the timer and act it out. No talking, lip-syncing or pointing at things that spell it.</li>
         <li class="c-peach">Your team shouts guesses. Tap <b>Guessed it!</b> when they get the full title.</li>
         <li class="c-blue">Don't know the movie? <b>Pass</b> before you start the timer.</li>
-        <li class="c-pink">Easy scores 1, medium 2, hard 3. Most points after all turns wins.</li>
+        <li class="c-pink">Each movie guessed scores 1 point. Most points after all turns wins.</li>
       </ol>
       <h2 class="section-label">Classic signals</h2>
       <ul class="signals">
@@ -247,13 +231,6 @@
       </ul>
     </section>
   </main>
-
-  <!-- Navigation bar -->
-  <nav class="nav-bar" id="nav" aria-label="Main">
-    <button class="nav-item" data-nav="home"><span class="nav-pill"><svg class="ic"><use href="#i-home"/></svg></span><span class="nav-label">Play</span></button>
-    <button class="nav-item" data-nav="quick"><span class="nav-pill"><svg class="ic"><use href="#i-bolt"/></svg></span><span class="nav-label">Quick pick</span></button>
-    <button class="nav-item" data-nav="rules"><span class="nav-pill"><svg class="ic"><use href="#i-help"/></svg></span><span class="nav-label">How to play</span></button>
-  </nav>
 
   <dialog class="dialog" id="dialog">
     <form method="dialog">
@@ -277,7 +254,7 @@
       });
     }
   </script>
-  <script src="movies.js?v=6"></script>
-  <script src="app.js?v=6"></script>
+  <script src="movies.js?v=7"></script>
+  <script src="app.js?v=7"></script>
 </body>
 </html>

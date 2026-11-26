@@ -4,15 +4,14 @@
 
 ## Features
 
-- **~1,500 movies** (English and Hindi), each tagged by language, year and difficulty (easy / medium / hard)
-- Filter by language, difficulty and release year
-- **Team game**: 2–6 named teams, with a choice of time to act, turns per team and passes per turn. Points: easy 1, medium 2, hard 3
-- **Quick pick** (in the bottom bar): shows a random movie, with an optional timer
-- The movie card shows the word count and the letters in each word, to help the actor signal
+- **A simple randomizer**: ~1,500 English and Hindi movies, picked at random with no filters to set
+- **Team game**: 2–6 named teams, with a choice of time to act, turns per team and passes per turn. Each guessed movie scores 1 point
+- **Quick pick**: shows a random movie, with an optional timer
+- The movie card shows the number of words and the letters in each word, to help the actor signal, plus the language and year
 - While the timer runs, the title is covered; press and hold to peek
 - Beeps and vibration for the last 5 seconds, and the screen stays on while the timer runs
 - Movies already played don't repeat until the list runs out (you can reset this)
-- Material 3 Expressive design: big pastel tiles, shape-changing buttons, a bottom navigation bar and sky-blue accents (`#2AB6F6`)
+- Material 3 Expressive design: big pastel tiles, sky-blue accents (`#2AB6F6`), light theme
 - Installable to the home screen and works offline
 
 ## Run locally
