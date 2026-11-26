@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Ishara – Dumb Charades</title>
+  <meta name="description" content="Dumb charades with English and Hindi movies from 1991 onwards. Works offline." />
+  <meta name="theme-color" content="#fff8f5" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#18120f" media="(prefers-color-scheme: dark)" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Ishara" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,400..800&display=swap" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Material icon sprite (Apache 2.0, Google) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></symbol>
+    <symbol id="i-add" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></symbol>
+    <symbol id="i-stop" viewBox="0 0 24 24"><path d="M6 6h12v12H6z"/></symbol>
+    <symbol id="i-skip" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></symbol>
+    <symbol id="i-flag" viewBox="0 0 24 24"><path d="M14.4 6 14 4H5v17h2v-7h5.6l.4 2h7V6z"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></symbol>
+    <symbol id="i-help" viewBox="0 0 24 24"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"/></symbol>
+    <symbol id="i-people" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></symbol>
+    <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></symbol>
+    <symbol id="i-delete" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></symbol>
+    <symbol id="i-movie" viewBox="0 0 24 24"><path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z"/></symbol>
+    <symbol id="i-arrow-drop" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></symbol>
+  </svg>
+
+  <main id="app">
+
+    <!-- HOME -->
+    <section class="screen" id="screen-home" data-active>
+      <header class="hero">
+        <img class="hero-icon" src="icons/icon.svg" alt="" width="72" height="72" />
+        <h1 class="display-small">Ishara</h1>
+        <p class="body-large muted">Dumb charades · English &amp; Hindi movies · 1991 onwards</p>
+      </header>
+
+      <div class="card filled">
+        <h2 class="title-medium">Movies</h2>
+        <div class="segmented" role="radiogroup" aria-label="Language" data-setting="language">
+          <button class="ripple" data-value="both"><svg class="ic"><use href="#i-check"/></svg>Both</button>
+          <button class="ripple" data-value="english"><svg class="ic"><use href="#i-check"/></svg>English</button>
+          <button class="ripple" data-value="hindi"><svg class="ic"><use href="#i-check"/></svg>Hindi</button>
+        </div>
+        <div class="segmented" role="radiogroup" aria-label="Difficulty" data-setting="difficulty">
+          <button class="ripple" data-value="any"><svg class="ic"><use href="#i-check"/></svg>Any</button>
+          <button class="ripple" data-value="easy"><svg class="ic"><use href="#i-check"/></svg>Easy</button>
+          <button class="ripple" data-value="medium"><svg class="ic"><use href="#i-check"/></svg>Medium</button>
+          <button class="ripple" data-value="hard"><svg class="ic"><use href="#i-check"/></svg>Hard</button>
+        </div>
+        <label class="field">
+          <span class="field-label">Released from</span>
+          <select id="from-year"></select>
+          <svg class="ic field-trail"><use href="#i-arrow-drop"/></svg>
+        </label>
+        <p class="body-small muted" id="pool-count"></p>
+      </div>
+
+      <div class="actions">
+        <button class="btn filled big ripple" id="btn-team"><svg class="ic"><use href="#i-people"/></svg>Team game</button>
+        <button class="btn tonal big ripple" id="btn-quick"><svg class="ic"><use href="#i-bolt"/></svg>Quick pick</button>
+        <div class="row-center">
+          <button class="btn text ripple" id="btn-rules"><svg class="ic"><use href="#i-help"/></svg>How to play</button>
+          <button class="btn text ripple" id="btn-reset-seen"><svg class="ic"><use href="#i-refresh"/></svg>Reset played</button>
+        </div>
+        <div class="row-center" id="install-wrap" hidden>
+          <button class="btn outlined ripple" id="btn-install"><svg class="ic"><use href="#i-download"/></svg>Install app</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- TEAM SETUP -->
+    <section class="screen" id="screen-setup">
+      <header class="app-bar">
+        <button class="icon-btn ripple" data-go="home" aria-label="Back"><svg class="ic"><use href="#i-back"/></svg></button>
+        <h2 class="title-large">Team game</h2>
+        <span class="icon-slot"></span>
+      </header>
+      <div class="card filled">
+        <h3 class="title-medium">Teams</h3>
+        <ul id="team-list" class="team-list"></ul>
+        <button class="btn text ripple start" id="btn-add-team"><svg class="ic"><use href="#i-add"/></svg>Add team</button>
+      </div>
+      <div class="card filled">
+        <h3 class="title-medium">Rules</h3>
+        <label class="field">
+          <span class="field-label">Time to act</span>
+          <select id="round-time">
+            <option value="60">60 seconds</option>
+            <option value="90" selected>90 seconds</option>
+            <option value="120">2 minutes</option>
+            <option value="180">3 minutes</option>
+          </select>
+          <svg class="ic field-trail"><use href="#i-arrow-drop"/></svg>
+        </label>
+        <label class="field">
+          <span class="field-label">Turns per team</span>
+          <select id="turns">
+            <option>3</option><option selected>5</option><option>7</option><option>10</option>
+          </select>
+          <svg class="ic field-trail"><use href="#i-arrow-drop"/></svg>
+        </label>
+        <label class="field">
+          <span class="field-label">Passes per turn</span>
+          <select id="passes">
+            <option value="0">None</option><option value="1" selected>1</option><option value="2">2</option><option value="99">Unlimited</option>
+          </select>
+          <svg class="ic field-trail"><use href="#i-arrow-drop"/></svg>
+        </label>
+      </div>
+      <div class="actions">
+        <button class="btn filled big ripple" id="btn-start"><svg class="ic"><use href="#i-play"/></svg>Start game</button>
+      </div>
+    </section>
+
+    <!-- HANDOFF -->
+    <section class="screen" id="screen-handoff">
+      <header class="app-bar">
+        <button class="icon-btn ripple" id="btn-quit" aria-label="Quit game"><svg class="ic"><use href="#i-close"/></svg></button>
+        <h2 class="title-large" id="handoff-turn"></h2>
+        <span class="icon-slot"></span>
+      </header>
+      <div class="handoff">
+        <p class="label-large muted">UP NEXT</p>
+        <p class="display-medium team-name" id="handoff-team"></p>
+        <p class="body-large muted">Pick one player to act. Only they should look at the screen.</p>
+      </div>
+      <ul class="list" id="handoff-scores"></ul>
+      <div class="actions">
+        <button class="btn filled big ripple" id="btn-reveal"><svg class="ic"><use href="#i-eye"/></svg>Show me the movie</button>
+      </div>
+    </section>
+
+    <!-- MOVIE / PLAY -->
+    <section class="screen" id="screen-play">
+      <header class="app-bar">
+        <button class="icon-btn ripple" id="btn-play-back" aria-label="Back"><svg class="ic"><use href="#i-back"/></svg></button>
+        <h2 class="title-large" id="play-team"></h2>
+        <span class="badge label-large" id="play-passes"></span>
+      </header>
+
+      <div class="movie-card" id="movie-card">
+        <div class="chips">
+          <span class="chip" id="m-lang"></span>
+          <span class="chip" id="m-year"></span>
+          <span class="chip" id="m-diff"></span>
+        </div>
+        <p class="movie-title" id="m-title"></p>
+        <div class="chips words" id="m-words" aria-label="Word breakdown"></div>
+        <button class="cover" id="btn-cover" hidden>
+          <svg class="ic"><use href="#i-eye"/></svg>
+          <span>Press and hold to peek</span>
+        </button>
+      </div>
+
+      <div class="timer" id="timer" hidden>
+        <svg viewBox="0 0 120 120" aria-hidden="true">
+          <circle cx="60" cy="60" r="52" class="track" />
+          <circle cx="60" cy="60" r="52" class="bar" id="timer-bar" />
+        </svg>
+        <span class="display-medium" id="timer-text">90</span>
+      </div>
+
+      <div class="actions" id="act-pre">
+        <button class="btn filled big ripple" id="btn-go"><svg class="ic"><use href="#i-play"/></svg>Start timer</button>
+        <button class="btn outlined ripple" id="btn-pass"><svg class="ic"><use href="#i-skip"/></svg>Pass – new movie</button>
+      </div>
+      <div class="actions" id="act-live" hidden>
+        <button class="btn success big ripple" id="btn-guessed"><svg class="ic"><use href="#i-check"/></svg>Guessed it!</button>
+        <button class="btn outlined danger ripple" id="btn-giveup"><svg class="ic"><use href="#i-flag"/></svg>Give up</button>
+      </div>
+      <div class="actions" id="act-quick" hidden>
+        <button class="btn filled big ripple" id="btn-quick-next"><svg class="ic"><use href="#i-skip"/></svg>Next movie</button>
+        <button class="btn tonal ripple" id="btn-quick-timer"><svg class="ic"><use href="#i-play"/></svg><span>Start timer</span></button>
+      </div>
+    </section>
+
+    <!-- TURN RESULT -->
+    <section class="screen" id="screen-result">
+      <div class="result">
+        <p class="emoji" id="r-emoji"></p>
+        <p class="headline-medium" id="r-head"></p>
+        <p class="title-medium" id="r-movie"></p>
+        <p class="body-medium muted" id="r-detail"></p>
+      </div>
+      <ul class="list" id="result-scores"></ul>
+      <div class="actions">
+        <button class="btn filled big ripple" id="btn-next-turn"></button>
+      </div>
+    </section>
+
+    <!-- GAME OVER -->
+    <section class="screen" id="screen-over">
+      <div class="result">
+        <p class="emoji">🏆</p>
+        <p class="headline-medium" id="o-head"></p>
+      </div>
+      <ul class="list" id="over-scores"></ul>
+      <div class="actions">
+        <button class="btn filled big ripple" id="btn-again"><svg class="ic"><use href="#i-refresh"/></svg>Play again</button>
+        <button class="btn text ripple" data-go="home"><svg class="ic"><use href="#i-home"/></svg>Home</button>
+      </div>
+    </section>
+
+    <!-- RULES -->
+    <section class="screen" id="screen-rules">
+      <header class="app-bar">
+        <button class="icon-btn ripple" data-go="home" aria-label="Back"><svg class="ic"><use href="#i-back"/></svg></button>
+        <h2 class="title-large">How to play</h2>
+        <span class="icon-slot"></span>
+      </header>
+      <div class="card filled">
+        <ol class="steps body-medium">
+          <li>Split into teams. On your turn, one player looks at the movie on screen — nobody else.</li>
+          <li>Start the timer and act it out without speaking, lip-syncing or pointing at things that spell the answer.</li>
+          <li>Your team shouts guesses. Tap <b>Guessed it!</b> the moment they get the full title.</li>
+          <li>You can <b>pass</b> before starting the timer if you don't know the movie.</li>
+          <li>Easy movies score 1, medium 2, hard 3. Most points after all turns wins.</li>
+        </ol>
+      </div>
+      <h3 class="title-medium section-head">Classic signals</h3>
+      <ul class="list">
+        <li><span class="avatar">🎥</span><span class="body-large">Crank an old camera — it's a movie</span></li>
+        <li><span class="avatar">🙏</span><span class="body-large">Namaste / hands on heart — Hindi film</span></li>
+        <li><span class="avatar">🎩</span><span class="body-large">Tip a hat / wave like royalty — English film</span></li>
+        <li><span class="avatar">✋</span><span class="body-large">Hold up fingers — number of words</span></li>
+        <li><span class="avatar">☝️</span><span class="body-large">Fingers on forearm — which word / syllables</span></li>
+        <li><span class="avatar">👂</span><span class="body-large">Tug your ear — "sounds like"</span></li>
+        <li><span class="avatar">🤏</span><span class="body-large">Pinch fingers — small word (a, the, of, ka…)</span></li>
+        <li><span class="avatar">🙌</span><span class="body-large">Sweep arms — the whole title at once</span></li>
+      </ul>
+    </section>
+  </main>
+
+  <!-- Material dialog -->
+  <dialog class="dialog" id="dialog">
+    <form method="dialog">
+      <h2 class="headline-small" id="dialog-title"></h2>
+      <p class="body-medium muted" id="dialog-text"></p>
+      <div class="dialog-actions">
+        <button class="btn text ripple" value="cancel">Cancel</button>
+        <button class="btn text ripple" value="ok" id="dialog-ok">OK</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="snackbar body-medium" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="movies.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
