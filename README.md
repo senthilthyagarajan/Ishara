@@ -7,6 +7,7 @@
 One screen, one button. Tap **Get a movie** and a random English or Hindi movie appears; tap **Next movie** for another.
 
 - ~1,500 movies, picked at random; none repeats until you've seen them all
+- A 90-second timer starts with each movie: tap it to pause or resume. It turns red for the last 10 seconds, beeps for the last 5 and buzzes at zero, and the screen stays on while it runs
 - The card shows the number of words and the letters in each word (handy for signalling), plus the language and year
 - Light, bright Material 3 Expressive look with sky-blue accents
 - Installable to the home screen and works offline

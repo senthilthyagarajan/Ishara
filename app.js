@@ -50,8 +50,91 @@
     card.classList.add("pop");
     $("go").textContent = "Next movie";
     $("home").hidden = false;
+    $("timer").hidden = false;
     fit();
+    resetTimer();
+    startTimer();
   }
+
+  // ---------- timer: starts with each movie, tap to pause / resume ----------
+  const DURATION = 90 * 1000;
+  const ICON = {
+    pause: "M6 19h4V5H6v14zm8-14v14h4V5h-4z",
+    play: "M8 5v14l11-7z",
+    replay: "M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z",
+  };
+  let left = DURATION, endAt = 0, tid = null, state = "idle", lastBeep = -1, wakeLock = null, audio = null;
+
+  function beep(freq, ms, vol = 0.15) {
+    try {
+      audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+      if (audio.state === "suspended") audio.resume();
+      const o = audio.createOscillator(), g = audio.createGain();
+      o.frequency.value = freq;
+      g.gain.setValueAtTime(vol, audio.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.0001, audio.currentTime + ms / 1000);
+      o.connect(g).connect(audio.destination);
+      o.start(); o.stop(audio.currentTime + ms / 1000);
+    } catch { /* no sound available */ }
+  }
+  const buzz = (p) => { try { navigator.vibrate && navigator.vibrate(p); } catch { /* ignore */ } };
+  async function keepAwake(on) {
+    try {
+      if (on && "wakeLock" in navigator && !wakeLock) {
+        wakeLock = await navigator.wakeLock.request("screen");
+        wakeLock.addEventListener("release", () => { wakeLock = null; });
+      } else if (!on && wakeLock) { await wakeLock.release(); wakeLock = null; }
+    } catch { /* not supported */ }
+  }
+
+  function renderTimer() {
+    const secs = Math.ceil(left / 1000);
+    const t = $("timer");
+    $("timer-text").textContent = state === "done" ? "Time's up!" : `${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, "0")}`;
+    $("timer-fill").style.width = `${(1 - left / DURATION) * 100}%`;
+    $("timer-ic").setAttribute("d", state === "running" ? ICON.pause : state === "done" ? ICON.replay : ICON.play);
+    t.classList.toggle("low", state === "running" && secs <= 10);
+    t.classList.toggle("done", state === "done");
+    t.classList.toggle("paused", state === "paused");
+  }
+  function tick() {
+    left = Math.max(0, endAt - Date.now());
+    const secs = Math.ceil(left / 1000);
+    if (secs <= 5 && secs > 0 && secs !== lastBeep) { lastBeep = secs; beep(990, 90); buzz(40); }
+    if (left <= 0) {
+      clearInterval(tid); tid = null; state = "done";
+      beep(220, 700, 0.25); buzz([300, 100, 300]);
+      keepAwake(false);
+    }
+    renderTimer();
+  }
+  function startTimer() {
+    clearInterval(tid);
+    state = "running"; endAt = Date.now() + left;
+    tid = setInterval(tick, 200);
+    keepAwake(true);
+    tick();
+  }
+  function pauseTimer() {
+    clearInterval(tid); tid = null;
+    left = Math.max(0, endAt - Date.now());
+    state = "paused";
+    keepAwake(false);
+    renderTimer();
+  }
+  function resetTimer() {
+    clearInterval(tid); tid = null;
+    left = DURATION; state = "idle"; lastBeep = -1;
+    keepAwake(false);
+    renderTimer();
+  }
+  $("timer").addEventListener("click", () => {
+    if (state === "running") pauseTimer();
+    else { if (state === "done") resetTimer(); startTimer(); }
+  });
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible" && state === "running") keepAwake(true);
+  });
 
   // Shrink a very long title until the whole card fits on screen (small phones).
   function fit() {
@@ -73,6 +156,8 @@
     $("card").hidden = true;
     $("welcome").hidden = false;
     $("home").hidden = true;
+    $("timer").hidden = true;
+    resetTimer();
     $("go").textContent = "Get a movie";
     current = null;
   }

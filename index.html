@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,400..800&display=swap" />
-  <link rel="stylesheet" href="styles.css?v=9" />
+  <link rel="stylesheet" href="styles.css?v=10" />
 </head>
 <body>
   <main id="app">
@@ -49,6 +49,14 @@
       </article>
     </section>
 
+    <button class="timer" id="timer" hidden aria-label="Timer: tap to pause or resume">
+      <span class="timer-fill" id="timer-fill"></span>
+      <span class="timer-row">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path id="timer-ic" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+        <span id="timer-text">1:30</span>
+      </span>
+    </button>
+
     <button class="go" id="go">Get a movie</button>
   </main>
 
@@ -61,7 +69,7 @@
       });
     }
   </script>
-  <script src="movies.js?v=9"></script>
-  <script src="app.js?v=9"></script>
+  <script src="movies.js?v=10"></script>
+  <script src="app.js?v=10"></script>
 </body>
 </html>
