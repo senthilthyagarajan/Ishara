@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Ishara – Dumb Charades</title>
-  <meta name="description" content="Tap for a random English or Hindi movie to act out. Works offline." />
+  <meta name="description" content="Tap for a random English or Hindi movie to act out, and keep team scores. Works offline." />
   <meta name="theme-color" content="#fbfcff" />
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
@@ -16,49 +16,84 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,400..800&display=swap" />
-  <link rel="stylesheet" href="styles.css?v=10" />
+  <link rel="stylesheet" href="styles.css?v=11" />
 </head>
 <body>
   <main id="app">
-    <header class="hero">
-      <button class="brand" id="brand" aria-label="Ishara – home">
-        <img class="hero-icon" src="icons/icon.svg" alt="" width="48" height="48" />
-        <h1>Ishara</h1>
-      </button>
-      <button class="home" id="home" aria-label="Home" hidden>
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-      </button>
-    </header>
 
-    <section class="stage" aria-live="polite">
-      <div class="welcome" id="welcome">
-        <span class="welcome-emoji" aria-hidden="true">🎬</span>
-        <p>Ready to act?</p>
+    <!-- ===== Movies tab ===== -->
+    <section class="tab" id="tab-movies">
+      <header class="hero">
+        <button class="brand" id="brand" aria-label="Ishara – start screen">
+          <img class="hero-icon" src="icons/icon.svg" alt="" width="48" height="48" />
+          <h1>Ishara</h1>
+        </button>
+        <button class="icon-tonal" id="home" aria-label="Start screen" hidden>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        </button>
+      </header>
+
+      <section class="stage" aria-live="polite">
+        <div class="welcome" id="welcome">
+          <span class="welcome-emoji" aria-hidden="true">🎬</span>
+          <p>Ready to act?</p>
+        </div>
+
+        <article class="movie-card" id="card" hidden>
+          <div class="mc-top">
+            <span class="mc-num" id="m-count"></span>
+            <span class="mc-unit" id="m-unit"></span>
+          </div>
+          <div class="mc-letters" id="m-words" aria-label="Letters in each word"></div>
+          <div class="mc-foot">
+            <p class="mc-title" id="m-title"></p>
+            <p class="mc-meta"><span id="m-lang"></span> · <span id="m-year"></span> · <span id="m-level"></span></p>
+          </div>
+        </article>
+      </section>
+
+      <button class="timer" id="timer" hidden aria-label="Timer: tap to pause or resume">
+        <span class="timer-fill" id="timer-fill"></span>
+        <span class="timer-row">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path id="timer-ic" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+          <span id="timer-text">1:30</span>
+        </span>
+      </button>
+
+      <div class="levels" role="radiogroup" aria-label="Difficulty" id="levels">
+        <button role="radio" data-level="easy">Easy</button>
+        <button role="radio" data-level="medium">Medium</button>
+        <button role="radio" data-level="hard">Hard</button>
       </div>
 
-      <article class="movie-card" id="card" hidden>
-        <div class="mc-top">
-          <span class="mc-num" id="m-count"></span>
-          <span class="mc-unit" id="m-unit"></span>
-        </div>
-        <div class="mc-letters" id="m-words" aria-label="Letters in each word"></div>
-        <div class="mc-foot">
-          <p class="mc-title" id="m-title"></p>
-          <p class="mc-meta"><span id="m-lang"></span> · <span id="m-year"></span></p>
-        </div>
-      </article>
+      <button class="go" id="go">Get a movie</button>
     </section>
 
-    <button class="timer" id="timer" hidden aria-label="Timer: tap to pause or resume">
-      <span class="timer-fill" id="timer-fill"></span>
-      <span class="timer-row">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path id="timer-ic" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-        <span id="timer-text">1:30</span>
-      </span>
-    </button>
-
-    <button class="go" id="go">Get a movie</button>
+    <!-- ===== Scores tab ===== -->
+    <section class="tab" id="tab-scores" hidden>
+      <header class="hero">
+        <h1>Scores</h1>
+        <button class="text-btn" id="reset-scores">Reset scores</button>
+      </header>
+      <div class="teams" id="teams"></div>
+      <button class="add-team" id="add-team">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+        Add team
+      </button>
+    </section>
   </main>
+
+  <!-- ===== Bottom tabs ===== -->
+  <nav class="nav-bar" aria-label="Sections">
+    <button class="nav-item" data-tab="movies" aria-current="page">
+      <span class="nav-pill"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z"/></svg></span>
+      <span class="nav-label">Movies</span>
+    </button>
+    <button class="nav-item" data-tab="scores">
+      <span class="nav-pill"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 21H2V9h5.5v12zm7.25-18h-5.5v18h5.5V3zM22 11h-5.5v10H22V11z"/></svg></span>
+      <span class="nav-label">Scores</span>
+    </button>
+  </nav>
 
   <script>
     // When a new version of the app takes over, reload once so the page and its code always match.
@@ -69,7 +104,7 @@
       });
     }
   </script>
-  <script src="movies.js?v=10"></script>
-  <script src="app.js?v=10"></script>
+  <script src="movies.js?v=11"></script>
+  <script src="app.js?v=11"></script>
 </body>
 </html>

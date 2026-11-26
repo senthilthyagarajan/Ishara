@@ -4,31 +4,70 @@
   const MOVIES = window.ISHARA_MOVIES || [];
   const COLORS = ["c-lavender", "c-yellow", "c-peach", "c-blue", "c-pink", "c-coral"];
   const LANG = { english: "English", hindi: "Hindi" };
+  const LEVEL = { easy: "Easy", medium: "Medium", hard: "Hard" };
   const $ = (id) => document.getElementById(id);
 
-  // Remember which movies were shown so they don't repeat until the list runs out.
-  let seen;
-  try { seen = new Set(JSON.parse(localStorage.getItem("ishara:seen") || "[]")); } catch { seen = new Set(); }
-  const save = () => { try { localStorage.setItem("ishara:seen", JSON.stringify([...seen])); } catch { /* ignore */ } };
+  // ---------- storage (best effort; the app works without it) ----------
+  const load = (key, fallback) => {
+    try { const v = localStorage.getItem("ishara:" + key); return v == null ? fallback : JSON.parse(v); } catch { return fallback; }
+  };
+  const store = (key, value) => { try { localStorage.setItem("ishara:" + key, JSON.stringify(value)); } catch { /* ignore */ } };
 
+  // ======================================================================
+  // Tabs
+  // ======================================================================
+  function showTab(name) {
+    $("tab-movies").hidden = name !== "movies";
+    $("tab-scores").hidden = name !== "scores";
+    document.querySelectorAll(".nav-item").forEach((b) => {
+      if (b.dataset.tab === name) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current");
+    });
+    if (name === "movies") fit();
+  }
+  document.querySelectorAll(".nav-item").forEach((b) => b.addEventListener("click", () => showTab(b.dataset.tab)));
+
+  // ======================================================================
+  // Movies tab
+  // ======================================================================
+  let level = load("level", "easy");
+  if (!LEVEL[level]) level = "easy";
+  let seen = new Set(load("seen", []));
   let current = null;
 
+  function syncLevels() {
+    document.querySelectorAll("#levels button").forEach((b) => b.setAttribute("aria-checked", String(b.dataset.level === level)));
+  }
+  $("levels").addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b) return;
+    level = b.dataset.level;
+    store("level", level);
+    syncLevels();
+  });
+  syncLevels();
+
+  // A random movie at the chosen level; no repeats until that level's list runs out.
   function pick() {
-    let fresh = MOVIES.filter((m) => !seen.has(m.id) && m !== current);
-    if (!fresh.length) { seen.clear(); fresh = MOVIES.filter((m) => m !== current); }
+    const pool = MOVIES.filter((m) => m.difficulty === level);
+    let fresh = pool.filter((m) => !seen.has(m.id) && m !== current);
+    if (!fresh.length) {
+      pool.forEach((m) => seen.delete(m.id));
+      fresh = pool.filter((m) => m !== current);
+    }
     const m = fresh[Math.floor(Math.random() * fresh.length)];
     seen.add(m.id);
-    save();
+    store("seen", [...seen]);
     return m;
   }
 
-  function show(m) {
+  function showMovie(m) {
     const card = $("card");
     const colors = COLORS.filter((c) => !card.classList.contains(c));
     card.className = "movie-card " + colors[Math.floor(Math.random() * colors.length)];
     $("m-title").textContent = m.title;
     $("m-lang").textContent = LANG[m.language];
     $("m-year").textContent = m.year;
+    $("m-level").textContent = LEVEL[m.difficulty];
 
     const words = m.title.split(/\s+/).filter((w) => /[\p{L}\p{N}]/u.test(w));
     $("m-count").textContent = words.length;
@@ -55,6 +94,44 @@
     resetTimer();
     startTimer();
   }
+
+  // Shrink a very long title until the whole card fits on screen (small phones).
+  function fit() {
+    const card = $("card"), title = $("m-title");
+    if (card.hidden || $("tab-movies").hidden) return;
+    const overflowing = () => card.scrollHeight > card.clientHeight + 1;
+    const shrink = () => {
+      title.style.fontSize = "";
+      let size = parseFloat(getComputedStyle(title).fontSize);
+      while (overflowing() && size > 18) { size -= 2; title.style.fontSize = size + "px"; }
+    };
+    card.classList.remove("compact", "tight");
+    title.style.fontSize = "";
+    if (overflowing()) card.classList.add("compact");
+    shrink();
+    if (overflowing()) { card.classList.add("tight"); shrink(); } // last resort: hide the letter boxes
+  }
+  window.addEventListener("resize", fit);
+
+  function goStart() {
+    $("card").hidden = true;
+    $("welcome").hidden = false;
+    $("home").hidden = true;
+    $("timer").hidden = true;
+    resetTimer();
+    $("go").textContent = "Get a movie";
+    current = null;
+  }
+
+  $("go").addEventListener("click", () => {
+    if ($("card").hidden) history.pushState({ movie: true }, ""); // so the phone's back gesture returns to the start
+    current = pick();
+    showMovie(current);
+  });
+  const backToStart = () => { if (history.state && history.state.movie) history.back(); else goStart(); };
+  $("home").addEventListener("click", backToStart);
+  $("brand").addEventListener("click", backToStart);
+  window.addEventListener("popstate", () => { goStart(); showTab("movies"); });
 
   // ---------- timer: starts with each movie, tap to pause / resume ----------
   const DURATION = 90 * 1000;
@@ -136,41 +213,65 @@
     if (document.visibilityState === "visible" && state === "running") keepAwake(true);
   });
 
-  // Shrink a very long title until the whole card fits on screen (small phones).
-  function fit() {
-    const card = $("card"), title = $("m-title");
-    if (card.hidden) return;
-    title.style.fontSize = "";
-    card.classList.remove("compact");
-    if (card.scrollHeight > card.clientHeight + 1) card.classList.add("compact");
-    let size = parseFloat(getComputedStyle(title).fontSize);
-    while (card.scrollHeight > card.clientHeight + 1 && size > 18) {
-      size -= 2;
-      title.style.fontSize = size + "px";
-    }
-  }
-  window.addEventListener("resize", fit);
+  // ======================================================================
+  // Scores tab
+  // ======================================================================
+  let teams = load("teams-scores", null);
+  if (!Array.isArray(teams) || !teams.length) teams = [{ name: "Team A", score: 0 }, { name: "Team B", score: 0 }];
+  const saveTeams = () => store("teams-scores", teams);
+  const MAX_TEAMS = 6;
 
-  // Back to the start screen
-  function goHome() {
-    $("card").hidden = true;
-    $("welcome").hidden = false;
-    $("home").hidden = true;
-    $("timer").hidden = true;
-    resetTimer();
-    $("go").textContent = "Get a movie";
-    current = null;
+  function renderTeams() {
+    const box = $("teams");
+    box.innerHTML = "";
+    const max = Math.max(...teams.map((t) => t.score));
+    teams.forEach((t, i) => {
+      const el = document.createElement("div");
+      el.className = "team " + COLORS[i % COLORS.length];
+      el.innerHTML = `
+        <div class="team-top">
+          <input class="team-name" maxlength="20" aria-label="Team ${i + 1} name" />
+          ${max > 0 && t.score === max ? '<span class="crown" aria-label="Leading">👑</span>' : ""}
+          <button class="team-remove" aria-label="Remove team"><svg viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
+        </div>
+        <div class="team-bottom">
+          <span class="team-score" aria-live="polite">${t.score}</span>
+          <button class="pt minus" aria-label="Minus one point"><svg viewBox="0 0 24 24"><path d="M19 13H5v-2h14v2z"/></svg></button>
+          <button class="pt plus" aria-label="Plus one point"><svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg></button>
+        </div>`;
+      const input = el.querySelector(".team-name");
+      input.value = t.name;
+      input.addEventListener("input", () => { t.name = input.value; saveTeams(); });
+      input.addEventListener("blur", () => { if (!t.name.trim()) { t.name = `Team ${i + 1}`; input.value = t.name; saveTeams(); } });
+      el.querySelector(".team-remove").hidden = teams.length <= 1;
+      el.querySelector(".team-remove").addEventListener("click", () => {
+        if (t.score > 0 && !confirm(`Remove ${t.name || "this team"} and its ${t.score} point${t.score === 1 ? "" : "s"}?`)) return;
+        teams.splice(i, 1); saveTeams(); renderTeams();
+      });
+      el.querySelector(".plus").addEventListener("click", () => { t.score++; saveTeams(); renderTeams(); bump(i); });
+      el.querySelector(".minus").addEventListener("click", () => { if (t.score > 0) { t.score--; saveTeams(); renderTeams(); } });
+      el.querySelector(".minus").disabled = t.score === 0;
+      box.appendChild(el);
+    });
+    $("add-team").hidden = teams.length >= MAX_TEAMS;
+    $("reset-scores").disabled = teams.every((t) => t.score === 0);
   }
-
-  $("go").addEventListener("click", () => {
-    if ($("card").hidden) history.pushState({ movie: true }, ""); // so the phone's back gesture returns home
-    current = pick();
-    show(current);
+  function bump(i) {
+    const s = $("teams").children[i] && $("teams").children[i].querySelector(".team-score");
+    if (s) { s.classList.add("bump"); s.addEventListener("animationend", () => s.classList.remove("bump"), { once: true }); }
+  }
+  $("add-team").addEventListener("click", () => {
+    teams.push({ name: `Team ${String.fromCharCode(65 + teams.length)}`, score: 0 });
+    saveTeams(); renderTeams();
+    const inputs = $("teams").querySelectorAll(".team-name");
+    inputs[inputs.length - 1].select();
   });
-  const backHome = () => { if (history.state && history.state.movie) history.back(); else goHome(); };
-  $("home").addEventListener("click", backHome);
-  $("brand").addEventListener("click", backHome);
-  window.addEventListener("popstate", goHome);
+  $("reset-scores").addEventListener("click", () => {
+    if (!confirm("Set every team's score back to 0?")) return;
+    teams.forEach((t) => { t.score = 0; });
+    saveTeams(); renderTeams();
+  });
+  renderTeams();
 
   if ("serviceWorker" in navigator && location.protocol !== "file:") {
     window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
